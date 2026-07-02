@@ -2,9 +2,6 @@ import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.errors import RateLimitExceeded
-from slowapi.middleware import SlowAPIMiddleware
 from backend.app.core.config import settings
 from backend.app.database import init_db, check_db_connection
 from backend.app.core.logging import configure_logging
@@ -35,10 +32,17 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-limiter = Limiter(key_func=lambda r: r.client.host)
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-app.add_middleware(SlowAPIMiddleware)
+try:
+    from slowapi import Limiter, _rate_limit_exceeded_handler
+    from slowapi.errors import RateLimitExceeded
+    from slowapi.middleware import SlowAPIMiddleware
+
+    limiter = Limiter(key_func=lambda r: r.client.host)
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+    app.add_middleware(SlowAPIMiddleware)
+except Exception:
+    logger.warning("slowapi indisponible — rate limiting désactivé")
 
 app.add_middleware(
     CORSMiddleware,
