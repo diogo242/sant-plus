@@ -4,7 +4,6 @@ sqlalchemy==2.0.36
 asyncpg==0.30.0
 alembic==1.13.2
 pydantic==2.6.4
-pydantic-settings==2.6.1
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 python-multipart==0.0.18
@@ -18,5 +17,5 @@ pytest==8.3.4
 pytest-asyncio==0.23.8
 httpx==0.28.1
 qrcode==7.4.2
-pillow==10.4.0
+
 
